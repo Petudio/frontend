@@ -21,18 +21,6 @@ class _FourCutsState extends State<FourCuts> {
   // Replace with your S3 bucket URL
   final String s3BucketUrl = 'http://54.180.57.146:8080/api/fourcuts/upload';
 
-
-
-  // 카메라, 갤러리에서 이미지 1개 불러오기
-  // ImageSource.galley , ImageSource.camera 
-  void getImage(ImageSource source) async {
-    final XFile? image = await _picker.pickImage(source: source);
-
-    setState(() {
-      _pickedImages.add(image);
-    });
-  }
-  
   // 이미지 여러개 불러오기
   void getMultiImage() async {
     final List<XFile>? images = await _picker.pickMultiImage();
@@ -46,35 +34,6 @@ class _FourCutsState extends State<FourCuts> {
 
   bool isSendButtonEnabled() {
     return _pickedImages.length >= 2;
-  }
-
-Future<void> uploadToS3(XFile file) async {
-    final url = await getPresignedUrl();
-    final response = await http.put(Uri.parse(url!), body: await file.readAsBytes());
-    
-    if (response.statusCode == 200) {
-      // File uploaded successfully
-      print('File uploaded successfully');
-
-
-    } else {
-      // Handle error
-      print('Error uploading file: ${response.statusCode}');
-    }
-  }
-
-  Future<String?> getPresignedUrl() async {
-    // Replace with your server logic to get a presigned URL
-    // You need to implement a server endpoint that generates presigned URLs
-    // Check your S3 SDK documentation for how to generate presigned URLs on your server
-    final response = await http.post(Uri.parse('http://54.180.57.146:8080/api/fourcuts/upload'));
-    if (response.statusCode == 200) {
-      return response.body;
-    } else {
-      // Handle error
-      print('Error getting presigned URL: ${response.statusCode}');
-      return null;
-    }
   }
 
   @override
@@ -94,7 +53,25 @@ Future<void> uploadToS3(XFile file) async {
       ),
     );
   }
-  
+
+  void uploadimages() async {
+    final url = Uri.parse('http://54.180.57.146:8080/api/fourcuts/upload');
+    var request = http.MultipartRequest('POST', url);
+    for (var image in _pickedImages) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'beforePictures',
+          image!.path,
+        ),
+      );
+    }
+    var response = await request.send();
+    var responseData = await response.stream.bytesToString();
+    print(responseData.split(":")[1]);
+
+    //upload button
+  }
+
   // 화면 하단 버튼
   Widget _imageLoadButtons() {
     return Padding(
@@ -111,13 +88,9 @@ Future<void> uploadToS3(XFile file) async {
           SizedBox(
             child: ElevatedButton(
               onPressed: isSendButtonEnabled()
-                  ? () async {
-                      for (var image in _pickedImages) {
-                        if (image != null) {
-                          await uploadToS3(image);
-                        }
-                      }
-                  }
+                  ? () {
+                      uploadimages();
+                    }
                   : null,
               child: const Text('Send'),
             ),
@@ -126,7 +99,7 @@ Future<void> uploadToS3(XFile file) async {
       ),
     );
   }
-  
+
   // 불러온 이미지 gridView
   Widget _gridPhoto() {
     return Expanded(
