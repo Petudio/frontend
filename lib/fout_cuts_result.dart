@@ -3,24 +3,23 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:petudio/fout_cuts_result.dart';
 
 void main() {
-  runApp(FourCuts());
+  runApp(FourCutsResult());
 }
 
-class FourCuts extends StatefulWidget {
-  const FourCuts({Key? key}) : super(key: key);
+class FourCutsResult extends StatefulWidget {
+  const FourCutsResult({Key? key}) : super(key: key);
 
   @override
-  State<FourCuts> createState() => _FourCutsState();
+  State<FourCutsResult> createState() => _FourCutsResultState();
 }
 
-class _FourCutsState extends State<FourCuts> {
+class _FourCutsResultState extends State<FourCutsResult> {
   final ImagePicker _picker = ImagePicker();
   final List<XFile?> _pickedImages = [];
   // Replace with your S3 bucket URL
-  final String s3BucketUrl = 'http://54.180.57.146:8080/api/fourcuts/upload';
+  final String s3BucketUrl = 'http://54.180.57.146:8080/api/four-cuts/upload';
 
   // 이미지 여러개 불러오기
   void getMultiImage() async {
@@ -47,7 +46,7 @@ class _FourCutsState extends State<FourCuts> {
             children: [
               _gridPhoto(),
               const SizedBox(height: 20),
-              _imageLoadButtons(),
+              //_imageLoadButtons(),
             ],
           ),
         ),
@@ -55,26 +54,26 @@ class _FourCutsState extends State<FourCuts> {
     );
   }
 
-  void uploadimages() async {
-    final url = Uri.parse('http://54.180.57.146:8080/api/fourcuts/upload');
-    var request = http.MultipartRequest('POST', url);
-    for (var image in _pickedImages) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'beforePictures',
-          image!.path,
-        ),
-      );
-    }
-    var response = await request.send();
-    var responseData = await response.stream.bytesToString();
-    print(responseData.split(":")[1]);
+  void downloadimages() async {
+    // final url = Uri.parse('http://54.180.57.146:8080/api/four-cuts/upload');
+    // var request = http.MultipartRequest('POST', url);
+    // for (var image in _pickedImages) {
+    //   request.files.add(
+    //     await http.MultipartFile.fromPath(
+    //       'beforePictures',
+    //       image!.path,
+    //     ),
+    //   );
+    // }
+    // var response = await request.send();
+    // var responseData = await response.stream.bytesToString();
+    // print(responseData.split(":")[1]);
 
     //upload button
   }
 
   // 화면 하단 버튼
-  Widget _imageLoadButtons() {
+  Widget _imageButtons() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
@@ -83,21 +82,17 @@ class _FourCutsState extends State<FourCuts> {
           SizedBox(
             child: ElevatedButton(
               onPressed: () => getMultiImage(),
-              child: const Text('Multi Image'),
+              child: const Text('Download'),
             ),
           ),
           SizedBox(
             child: ElevatedButton(
               onPressed: isSendButtonEnabled()
                   ? () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const FourCutsResult()));
-                      uploadimages();
+                      downloadimages();
                     }
                   : null,
-              child: const Text('Send'),
+              child: const Text('Share'),
             ),
           ),
         ],
