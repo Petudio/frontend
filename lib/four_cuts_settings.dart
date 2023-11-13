@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:petudio/four_cuts_options.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+
 
 class FourCutsSettings extends StatefulWidget {
-  const FourCutsSettings({Key? key}) : super(key: key);
+  final List<XFile?> pickedImages;
+
+  // Add the pickedImages parameter to the constructor
+  const FourCutsSettings({Key? key, required this.pickedImages}) : super(key: key);
 
   @override
   State<FourCutsSettings> createState() => _FourCutsSettingsState();
@@ -22,6 +29,56 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     '구역 4': null,
   };
 
+  //   void uploadimages() async {
+  //   final url = Uri.parse('http://54.180.57.146:8080/api/fourcuts/upload');
+  //   var request = http.MultipartRequest('POST', url);
+  //   for (var image in _pickedImages) {
+  //     request.files.add(
+  //       await http.MultipartFile.fromPath(
+  //         'beforePictures',
+  //         image!.path,
+  //       ),
+  //     );
+  //   }
+  //   var response = await request.send();
+  //   var responseData = await response.stream.bytesToString();
+  //   print(responseData.split(":")[1]);
+
+  //   //upload button
+  // }
+
+  Future<void> sendDataToServer() async {
+    final url = Uri.parse('http://54.180.57.146:8080/api/fourcuts/upload'); // 서버의 엔드포인트 주소로 변경해야 합니다.
+    
+    // 필요한 데이터를 Map에 담습니다.
+    Map<String, dynamic> requestData = {
+      'pickedImages': widget.pickedImages.map((image) => image?.path).toList(),
+      'selectedItemsMap': selectedItemsMap,
+      'selectedBackgroundMap': selectedBackgroundMap,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestData),
+      );
+
+      if (response.statusCode == 200) {
+        // 성공적으로 서버에 데이터를 보냈을 때의 로직
+        print('Data sent successfully!');
+      } else {
+        // 서버로부터 오류 응답을 받았을 때의 처리
+        print('Failed to send data. Server responded with ${response.statusCode}');
+      }
+    } catch (error) {
+      // 오류가 발생했을 때의 처리
+      print('Error: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +90,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
         child: Container(
           margin: const EdgeInsets.all(20.0),
           decoration: BoxDecoration(
-            color: Colors.green,
+            color: Colors.red,
           ),
           child: Column(
             children: [
@@ -182,7 +239,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                 ),
               ),
                 Image.asset(
-                  'assets/Logo_of_Petudio_removebg.png'), // 이미지 파일 경로를 적절히 수정하세요// 나머지 코드는 동일
+                  'assets/Logo_of_Petudio_removebg.png'), 
             ],
           ),
         ),
@@ -198,6 +255,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
           for (var entry in selectedBackgroundMap.entries) {
             print('${entry.key} 배경: ${entry.value}');
           }
+
+          sendDataToServer();
         },
         child: Text('만들기'),
       ),

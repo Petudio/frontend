@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
-//import 'package:petudio/four_cuts_options.dart';
-//import 'package:petudio/four_cuts_result.dart';
 import 'package:petudio/four_cuts_settings.dart';
+
 void main() {
   runApp(FourCuts());
 }
@@ -20,8 +18,7 @@ class FourCuts extends StatefulWidget {
 class _FourCutsState extends State<FourCuts> {
   final ImagePicker _picker = ImagePicker();
   final List<XFile?> _pickedImages = [];
-  // Replace with your S3 bucket URL
-  final String s3BucketUrl = 'http://54.180.57.146:8080/api/fourcuts/upload';
+  final XFile? pickedImages = null;
 
   // 이미지 여러개 불러오기
   void getMultiImage() async {
@@ -56,23 +53,7 @@ class _FourCutsState extends State<FourCuts> {
     );
   }
 
-  void uploadimages() async {
-    final url = Uri.parse('http://54.180.57.146:8080/api/fourcuts/upload');
-    var request = http.MultipartRequest('POST', url);
-    for (var image in _pickedImages) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'beforePictures',
-          image!.path,
-        ),
-      );
-    }
-    var response = await request.send();
-    var responseData = await response.stream.bytesToString();
-    print(responseData.split(":")[1]);
 
-    //upload button
-  }
 
   // 화면 하단 버튼
   Widget _imageLoadButtons() {
@@ -84,22 +65,27 @@ class _FourCutsState extends State<FourCuts> {
           SizedBox(
             child: ElevatedButton(
               onPressed: () => getMultiImage(),
-              child: const Text('Multi Image'),
+              child: const Text('이미지 선택하기'),
             ),
           ),
           SizedBox(
             child: ElevatedButton(
               onPressed: isSendButtonEnabled()
                   ? () {
-                      Navigator.push(
+                      // 이미지가 2개 이상 선택된 경우에만 옵션 선택 페이지로 이동
+                      if (isSendButtonEnabled()) {
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  FourCutsSettings())); // 수정된 부분
-                      uploadimages();
+                            builder: (context) => FourCutsSettings(
+                              pickedImages: _pickedImages
+                            ),
+                          ),
+                        );
+                      }
                     }
                   : null,
-              child: const Text('Send'),
+              child: const Text('옵션 선택하기'),
             ),
           ),
         ],
