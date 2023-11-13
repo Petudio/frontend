@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:petudio/fout_cuts_result.dart';
-
+//import 'package:petudio/four_cuts_options.dart';
+//import 'package:petudio/four_cuts_result.dart';
+import 'package:petudio/four_cuts_settings.dart';
 void main() {
   runApp(FourCuts());
 }
@@ -93,7 +94,8 @@ class _FourCutsState extends State<FourCuts> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const FourCutsResult()));
+                              builder: (context) =>
+                                  FourCutsSettings())); // 수정된 부분
                       uploadimages();
                     }
                   : null,

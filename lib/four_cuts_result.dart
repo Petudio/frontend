@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(FourCutsResult());
-}
-
 class FourCutsResult extends StatefulWidget {
   const FourCutsResult({Key? key}) : super(key: key);
 

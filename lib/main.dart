@@ -37,26 +37,7 @@ class MyHomePage extends StatelessWidget {
         padding : const EdgeInsets.fromLTRB(20, 20, 20, 20),
         child: Column(
           children: <Widget>[
-            InkWell(
-              onTap:(){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context)=>const pettohuman())
-                );
-              },
-              child : 
-            Image.asset("assets/pettohuman_word.jpg"),
-            ),
-             InkWell(
-              onTap:(){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context)=>const makingjuniors())
-                );
-              },
-              child : 
-            Image.asset("assets/makingjuniors_word.jpg"),
-            ),
+           
              InkWell(
               onTap:(){
                 Navigator.push(
