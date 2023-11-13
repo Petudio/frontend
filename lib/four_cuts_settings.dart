@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:petudio/four_cuts_generate.dart';
 import 'package:petudio/four_cuts_options.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -73,34 +74,6 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     var response = await request.send();
     var responseData = await response.stream.bytesToString();
     print(responseData.split(":")[1]);
-    // 필요한 데이터를 Map에 담습니다.
-    // Map<String, dynamic> requestData = {
-    //   'pickedImages': widget.pickedImages.map((image) => image?.path).toList(),
-    //   'selectedItemsMap': selectedItemsMap,
-    //   'selectedBackgroundMap': selectedBackgroundMap,
-    // };
-
-    // try {
-    //   final response = await http.post(
-    //     url,
-    //     headers: <String, String>{
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: jsonEncode(requestData),
-    //   );
-
-    //   if (response.statusCode == 200) {
-    //     // 성공적으로 서버에 데이터를 보냈을 때의 로직
-    //     print('Data sent successfully!');
-    //   } else {
-    //     // 서버로부터 오류 응답을 받았을 때의 처리
-    //     print(
-    //         'Failed to send data. Server responded with ${response.statusCode}');
-    //   }
-    // } catch (error) {
-    //   // 오류가 발생했을 때의 처리
-    //   print('Error: $error');
-    // }
   }
 
   @override
@@ -286,6 +259,12 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
 
           sendDataToServer();
           print("send complete");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FourCutsGenerate(),
+            ),
+          );
         },
         child: Text('만들기'),
       ),
