@@ -23,7 +23,6 @@ class _FourCutsState extends State<FourCuts> {
   // 이미지 여러개 불러오기
   void getMultiImage() async {
     final List<XFile>? images = await _picker.pickMultiImage();
-
     if (images != null) {
       setState(() {
         _pickedImages.addAll(images);
@@ -53,8 +52,6 @@ class _FourCutsState extends State<FourCuts> {
     );
   }
 
-
-
   // 화면 하단 버튼
   Widget _imageLoadButtons() {
     return Padding(
@@ -77,9 +74,8 @@ class _FourCutsState extends State<FourCuts> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => FourCutsSettings(
-                              pickedImages: _pickedImages
-                            ),
+                            builder: (context) =>
+                                FourCutsSettings(pickedImages: _pickedImages),
                           ),
                         );
                       }

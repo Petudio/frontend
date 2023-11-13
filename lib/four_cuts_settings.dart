@@ -4,12 +4,12 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 
-
 class FourCutsSettings extends StatefulWidget {
   final List<XFile?> pickedImages;
 
   // Add the pickedImages parameter to the constructor
-  const FourCutsSettings({Key? key, required this.pickedImages}) : super(key: key);
+  const FourCutsSettings({Key? key, required this.pickedImages})
+      : super(key: key);
 
   @override
   State<FourCutsSettings> createState() => _FourCutsSettingsState();
@@ -29,9 +29,10 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     '구역 4': null,
   };
 
-  //   void uploadimages() async {
+  // void uploadimages() async {
   //   final url = Uri.parse('http://54.180.57.146:8080/api/fourcuts/upload');
   //   var request = http.MultipartRequest('POST', url);
+  //   var _pickedImages = widget.pickedImages;
   //   for (var image in _pickedImages) {
   //     request.files.add(
   //       await http.MultipartFile.fromPath(
@@ -40,6 +41,9 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
   //       ),
   //     );
   //   }
+
+  //   print(request);
+
   //   var response = await request.send();
   //   var responseData = await response.stream.bytesToString();
   //   print(responseData.split(":")[1]);
@@ -48,35 +52,55 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
   // }
 
   Future<void> sendDataToServer() async {
-    final url = Uri.parse('http://54.180.57.146:8080/api/fourcuts/upload'); // 서버의 엔드포인트 주소로 변경해야 합니다.
-    
-    // 필요한 데이터를 Map에 담습니다.
-    Map<String, dynamic> requestData = {
-      'pickedImages': widget.pickedImages.map((image) => image?.path).toList(),
-      'selectedItemsMap': selectedItemsMap,
-      'selectedBackgroundMap': selectedBackgroundMap,
-    };
+    final url = Uri.parse(
+        'http://10.0.2.2:8080/api/four-cuts/upload'); // 서버의 엔드포인트 주소로 변경해야 합니다.
 
-    try {
-      final response = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(requestData),
+    var request = http.MultipartRequest('POST', url);
+    var _pickedImages = widget.pickedImages;
+    for (var image in _pickedImages) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'beforePictures',
+          image!.path,
+        ),
       );
-
-      if (response.statusCode == 200) {
-        // 성공적으로 서버에 데이터를 보냈을 때의 로직
-        print('Data sent successfully!');
-      } else {
-        // 서버로부터 오류 응답을 받았을 때의 처리
-        print('Failed to send data. Server responded with ${response.statusCode}');
-      }
-    } catch (error) {
-      // 오류가 발생했을 때의 처리
-      print('Error: $error');
     }
+    request.fields['selectedItems'] = jsonEncode(selectedItemsMap);
+    request.fields['selectedBackground'] = jsonEncode(selectedBackgroundMap);
+
+    print("fields: " + request.fields.toString());
+
+    var response = await request.send();
+    var responseData = await response.stream.bytesToString();
+    print(responseData.split(":")[1]);
+    // 필요한 데이터를 Map에 담습니다.
+    // Map<String, dynamic> requestData = {
+    //   'pickedImages': widget.pickedImages.map((image) => image?.path).toList(),
+    //   'selectedItemsMap': selectedItemsMap,
+    //   'selectedBackgroundMap': selectedBackgroundMap,
+    // };
+
+    // try {
+    //   final response = await http.post(
+    //     url,
+    //     headers: <String, String>{
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: jsonEncode(requestData),
+    //   );
+
+    //   if (response.statusCode == 200) {
+    //     // 성공적으로 서버에 데이터를 보냈을 때의 로직
+    //     print('Data sent successfully!');
+    //   } else {
+    //     // 서버로부터 오류 응답을 받았을 때의 처리
+    //     print(
+    //         'Failed to send data. Server responded with ${response.statusCode}');
+    //   }
+    // } catch (error) {
+    //   // 오류가 발생했을 때의 처리
+    //   print('Error: $error');
+    // }
   }
 
   @override
@@ -110,7 +134,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                           if (result != null) {
                             setState(() {
                               selectedItemsMap['구역 1'] = result['items'];
-                              selectedBackgroundMap['구역 1'] = result['background'];
+                              selectedBackgroundMap['구역 1'] =
+                                  result['background'];
                             });
                           }
                         },
@@ -143,7 +168,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                           if (result != null) {
                             setState(() {
                               selectedItemsMap['구역 2'] = result['items'];
-                              selectedBackgroundMap['구역 2'] = result['background'];
+                              selectedBackgroundMap['구역 2'] =
+                                  result['background'];
                             });
                           }
                         },
@@ -182,7 +208,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                           if (result != null) {
                             setState(() {
                               selectedItemsMap['구역 3'] = result['items'];
-                              selectedBackgroundMap['구역 3'] = result['background'];
+                              selectedBackgroundMap['구역 3'] =
+                                  result['background'];
                             });
                           }
                         },
@@ -215,7 +242,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                           if (result != null) {
                             setState(() {
                               selectedItemsMap['구역 4'] = result['items'];
-                              selectedBackgroundMap['구역 4'] = result['background'];
+                              selectedBackgroundMap['구역 4'] =
+                                  result['background'];
                             });
                           }
                         },
@@ -238,14 +266,14 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                   ],
                 ),
               ),
-                Image.asset(
-                  'assets/Logo_of_Petudio_removebg.png'), 
+              Image.asset('assets/Logo_of_Petudio_removebg.png'),
             ],
           ),
         ),
       ),
       bottomNavigationBar: ElevatedButton(
         onPressed: () {
+          print("만들기 버튼이 눌렸습니다.....");
           // "만들기" 버튼을 클릭할 때의 로직
           // 각 구역의 선택된 항목들에 대한 처리를 추가
           for (var entry in selectedItemsMap.entries) {
@@ -257,6 +285,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
           }
 
           sendDataToServer();
+          print("send complete");
         },
         child: Text('만들기'),
       ),
