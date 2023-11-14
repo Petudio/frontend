@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  image_gallery_saver: ^2.0.3
   image_picker: ^1.0.4
   multiple_images_picker: ^1.0.1
 
@@ -37,3 +38,31 @@ flutter:
     - assets/result2.jpg
     - assets/result3.jpg    
     - assets/result4.jpg
+    - assets/result5.jpg
+    - assets/result6.jpg
+    - assets/result7.jpg    
+    - assets/result8.jpg
+    - assets/result9.jpg
+    - assets/result10.jpg
+    - assets/result11.jpg
+    - assets/result12.jpg
+    - assets/result13.jpg    
+    - assets/result14.jpg
+    - assets/result15.jpg
+    - assets/result16.jpg
+    - assets/result17.jpg    
+    - assets/result18.jpg
+    - assets/result19.jpg
+    - assets/result20.jpg
+    - assets/result21.jpg
+    - assets/result22.jpg
+    - assets/result23.jpg    
+    - assets/result24.jpg
+    - assets/result25.jpg
+    - assets/result26.jpg
+    - assets/result27.jpg    
+    - assets/result28.jpg
+    - assets/result29.jpg
+    - assets/result30.jpg
+    - assets/result31.jpg
+    - assets/result32.jpg

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:petudio/four_cuts_options.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:petudio/four_cuts_result.dart';
+import 'package:petudio/four_cuts_result copy.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -31,7 +31,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     '구역 4': null,
   };
 
-  String selectedPet = 'dog'; // Default selection
+  String selectedPet = ''; // Default selection
+  TextEditingController bundleIdController = TextEditingController();
 
   Future<void> _showLoadingDialog(BuildContext context) async {
     return showDialog(
@@ -287,32 +288,47 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
               ),
             ),
           ),
+          // TextField for entering bundleId
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: bundleIdController,
+              decoration: InputDecoration(
+                labelText: 'Enter bundle Id',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: ElevatedButton(
-        onPressed: () async {
-          _showLoadingDialog(context);
+        onPressed: (selectedPet != null &&
+                selectedBackgroundMap.values
+                    .every((background) => background != null))
+            ? () async {
+                _showLoadingDialog(context);
 
-          print("Upload button pressed...");
-          for (var entry in selectedItemsMap.entries) {
-            print('${entry.key}: ${entry.value}');
-          }
-          for (var entry in selectedBackgroundMap.entries) {
-            print('${entry.key} 배경: ${entry.value}');
-          }
-          var tempBundleId = '1'; //입력 값으로 바꿔야함
-          bool status = await generateImage(tempBundleId);
-          print("Send complete");
-          Navigator.of(context, rootNavigator: true).pop();
+                print("Upload button pressed...");
+                for (var entry in selectedItemsMap.entries) {
+                  print('${entry.key}: ${entry.value}');
+                }
+                for (var entry in selectedBackgroundMap.entries) {
+                  print('${entry.key} 배경: ${entry.value}');
+                }
+                var tempBundleId = '1'; // 입력 값으로 바꿔야함
+                bool status = await generateImage(tempBundleId);
+                print("Send complete");
+                Navigator.of(context, rootNavigator: true).pop();
 
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FourCutsResult(imageMap: widget.imageMap),
-            ),
-          );
-        },
-        //화면 테스트용
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        FourCutsResult(imageMap: widget.imageMap),
+                  ),
+                );
+              }
+            : null, // Set onPressed to null when conditions are not met//화면 테스트용
         // onPressed: () {
         //   print("생성하기 버튼");
         //   Navigator.push(
