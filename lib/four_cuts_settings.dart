@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:petudio/four_cuts_options.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:petudio/four_cuts_result.dart';
 import 'package:petudio/four_cuts_result2.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -291,21 +290,30 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
         ],
       ),
       bottomNavigationBar: ElevatedButton(
-        onPressed: () async {
-          // await _showLoadingDialog(context);
+        // onPressed: () async {
+        //   // await _showLoadingDialog(context);
 
-          print("Upload button pressed...");
-          for (var entry in selectedItemsMap.entries) {
-            print('${entry.key}: ${entry.value}');
-          }
-          for (var entry in selectedBackgroundMap.entries) {
-            print('${entry.key} 배경: ${entry.value}');
-          }
-          var tempBundleId = '1'; //입력 값으로 바꿔야함
-          bool status = await generateImage(tempBundleId);
-          print("Send complete");
-          Navigator.of(context, rootNavigator: true).pop();
+        //   print("Upload button pressed...");
+        //   for (var entry in selectedItemsMap.entries) {
+        //     print('${entry.key}: ${entry.value}');
+        //   }
+        //   for (var entry in selectedBackgroundMap.entries) {
+        //     print('${entry.key} 배경: ${entry.value}');
+        //   }
+        //   var tempBundleId = '1'; //입력 값으로 바꿔야함
+        //   bool status = await generateImage(tempBundleId);
+        //   print("Send complete");
+        //   Navigator.of(context, rootNavigator: true).pop();
 
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => FourCutsResult2(imageMap: widget.imageMap),
+        //     ),
+        //   );
+        // },
+        onPressed: () {
+          print("생성하기 버튼");
           Navigator.push(
             context,
             MaterialPageRoute(

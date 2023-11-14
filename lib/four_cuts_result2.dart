@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:petudio/four_cuts_generate.dart';
-import 'package:petudio/four_cuts_options.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 
 class FourCutsResult2 extends StatefulWidget {
