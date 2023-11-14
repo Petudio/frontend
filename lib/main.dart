@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:petudio/four_cuts.dart';
 import 'package:petudio/four_cuts_generate.dart';
+import 'package:petudio/four_cuts_settings.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MainApp(
+    bundleId: '',
+  ));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final String bundleId;
+
+  const MainApp({super.key, required this.bundleId});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "petudio",
       theme: ThemeData(primarySwatch: Colors.yellow),
-      home: const MyHomePage(),
+      home: MyHomePage(
+        bundleId: bundleId,
+      ),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+  final String bundleId;
+
+  const MyHomePage({super.key, required this.bundleId});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +61,8 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const FourCutsGenerate()));
+                        builder: (context) =>
+                            FourCutsSettings(bundleId: bundleId)));
               },
               child: Text('만든 이미지 받기'),
             ),

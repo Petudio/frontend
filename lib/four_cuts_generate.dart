@@ -58,7 +58,7 @@ class _FourCutsGenerateState extends State<FourCutsGenerate> {
     );
   }
 
-  Future<void> generateImage() async {
+  Future<bool> generateImage() async {
     const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate';
     var bundleId = _controller.text;
 
@@ -71,6 +71,9 @@ class _FourCutsGenerateState extends State<FourCutsGenerate> {
 
     var data = jsonDecode(response.body);
     var bundle = data["data"];
+    if (bundle == "Training is not yet complete") {
+      return false;
+    }
     var pictures = bundle["pictures"];
 
     var l = pictures.length - 1;
@@ -82,10 +85,12 @@ class _FourCutsGenerateState extends State<FourCutsGenerate> {
       l -= 1;
     }
     print("imageMap" + imageMap.toString());
+    return true;
   }
 
   // 화면 하단 버튼
   Widget _generateButtons() {
+    bool status;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
@@ -94,13 +99,19 @@ class _FourCutsGenerateState extends State<FourCutsGenerate> {
           SizedBox(
             child: ElevatedButton(
               onPressed: () async {
-                await generateImage();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FourCutsResult(),
-                  ),
-                );
+                status = await generateImage();
+                print("status: " + status.toString());
+                if (status) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FourCutsResult(),
+                    ),
+                  );
+                } else {
+                  print("not training yet");
+                  //Toast message
+                }
               },
               child: const Text('이미지 생성하기'),
             ),

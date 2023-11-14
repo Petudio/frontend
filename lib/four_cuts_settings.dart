@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:petudio/four_cuts_options.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:petudio/four_cuts_result.dart';
+import 'package:petudio/four_cuts_result2.dart';
 import 'package:petudio/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class FourCutsSettings extends StatefulWidget {
-  final List<XFile?> pickedImages;
+  final String bundleId;
+  final Map<int, String> imageMap = {};
 
-  const FourCutsSettings({Key? key, required this.pickedImages})
-      : super(key: key);
+  FourCutsSettings({Key? key, required this.bundleId}) : super(key: key);
 
   @override
   State<FourCutsSettings> createState() => _FourCutsSettingsState();
 }
 
 class _FourCutsSettingsState extends State<FourCutsSettings> {
+  String animalType = '';
+
   Map<String, List<String>> selectedItemsMap = {
     '구역 1': [],
     '구역 2': [],
@@ -30,47 +34,59 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     '구역 4': null,
   };
 
-  String selectedPet = '강아지'; // Default selection
+  String selectedPet = 'dog'; // Default selection
 
-  Future<void> sendDataToServer() async {
-    final url = Uri.parse('http://10.0.2.2:8080/api/four-cuts/upload');
-    var request = http.MultipartRequest('POST', url);
-    var _pickedImages = widget.pickedImages;
-    for (var image in _pickedImages) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'beforePictures',
-          image!.path,
-        ),
-      );
-    }
+  // Future<void> _showLoadingDialog(BuildContext context) async {
+  //   return showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         content: Row(
+  //           children: [
+  //             CircularProgressIndicator(),
+  //             SizedBox(width: 50, height: 100),
+  //             Text("기다려주세요\n만드는 중입니다\n(최대 4분)"),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  Future<bool> generateImage(var tempBundleId) async {
+    const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate';
+
+    Map<String, String> params = {'bundleId': tempBundleId};
+
+    // URL에 파라미터 추가
+    Uri uri = Uri.parse(baseUrl).replace(queryParameters: params);
+    var request = http.MultipartRequest('Post', uri);
     request.fields['selectedItems'] = jsonEncode(selectedItemsMap);
     request.fields['selectedBackground'] = jsonEncode(selectedBackgroundMap);
-    request.fields['selectedPet'] = selectedPet; // Add selectedPet field
-
-    print("fields: " + request.fields.toString());
+    request.fields['animalType'] = animalType;
 
     var response = await request.send();
     var responseData = await response.stream.bytesToString();
-    print(responseData.split(":")[1]);
-  }
+    var jsonData = jsonDecode(responseData);
+    var bundle = jsonData["data"];
 
-  Future<void> _showLoadingDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 50, height: 100),
-              Text("기다려주세요\n만드는 중입니다\n(최대 4분)"),
-            ],
-          ),
-        );
-      },
-    );
+    if (bundle == "Training is not yet complete") {
+      return false;
+    }
+
+    var pictures = bundle["pictures"];
+
+    var l = pictures.length - 1;
+
+    for (var i = 0; i < 4; i++) {
+      var pictureS3Url = pictures[l]["pictureS3Url"];
+      var section = pictures[l]["section"];
+      widget.imageMap[section] = pictureS3Url;
+      l -= 1;
+    }
+    print("imageMap" + widget.imageMap.toString());
+    return true;
   }
 
   @override
@@ -88,7 +104,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Radio(
-                  value: '강아지',
+                  value: 'dog',
                   groupValue: selectedPet,
                   onChanged: (value) {
                     setState(() {
@@ -98,7 +114,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                 ),
                 Text('강아지'),
                 Radio(
-                  value: '고양이',
+                  value: 'cat',
                   groupValue: selectedPet,
                   onChanged: (value) {
                     setState(() {
@@ -237,7 +253,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                                 var result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => MainApp(),
+                                    builder: (context) => FourCutsOptions(),
                                   ),
                                 );
                                 if (result != null) {
@@ -278,7 +294,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
       ),
       bottomNavigationBar: ElevatedButton(
         onPressed: () async {
-          await _showLoadingDialog(context);
+          // await _showLoadingDialog(context);
 
           print("Upload button pressed...");
           for (var entry in selectedItemsMap.entries) {
@@ -287,20 +303,19 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
           for (var entry in selectedBackgroundMap.entries) {
             print('${entry.key} 배경: ${entry.value}');
           }
-
-          await sendDataToServer();
+          var tempBundleId = '1'; //입력 값으로 바꿔야함
+          bool status = await generateImage(tempBundleId);
           print("Send complete");
-
           Navigator.of(context, rootNavigator: true).pop();
 
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MainApp(),
+              builder: (context) => FourCutsResult2(imageMap: widget.imageMap),
             ),
           );
         },
-        child: Text('Upload'),
+        child: Text('생성하기'),
       ),
     );
   }

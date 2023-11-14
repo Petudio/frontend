@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:petudio/four_cuts_settings.dart';
+import 'package:petudio/main.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(FourCuts());
@@ -18,7 +20,7 @@ class FourCuts extends StatefulWidget {
 class _FourCutsState extends State<FourCuts> {
   final ImagePicker _picker = ImagePicker();
   final List<XFile?> _pickedImages = [];
-  final XFile? pickedImages = null;
+  final String bundleId = '';
 
   // 이미지 여러개 불러오기
   void getMultiImage() async {
@@ -28,6 +30,27 @@ class _FourCutsState extends State<FourCuts> {
         _pickedImages.addAll(images);
       });
     }
+  }
+
+  Future<String> sendDataToServer() async {
+    final url = Uri.parse('http://10.0.2.2:8080/api/four-cuts/upload');
+    var request = http.MultipartRequest('POST', url);
+    for (var image in _pickedImages) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'beforePictures',
+          image!.path,
+        ),
+      );
+    }
+
+    var response = await request.send();
+    var responseData = await response.stream.bytesToString();
+    var jsonData = jsonDecode(responseData);
+
+    String bundleId = jsonData["data"]["bundleId"].toString();
+    print(bundleId);
+    return bundleId;
   }
 
   bool isSendButtonEnabled() {
@@ -71,17 +94,17 @@ class _FourCutsState extends State<FourCuts> {
                   ? () {
                       // 이미지가 2개 이상 선택된 경우에만 옵션 선택 페이지로 이동
                       if (isSendButtonEnabled()) {
+                        sendDataToServer();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                FourCutsSettings(pickedImages: _pickedImages),
+                            builder: (context) => MainApp(bundleId: bundleId),
                           ),
                         );
                       }
                     }
                   : null,
-              child: const Text('옵션 선택하기'),
+              child: const Text('업로드'),
             ),
           ),
         ],
