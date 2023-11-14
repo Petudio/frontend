@@ -19,7 +19,7 @@ class _FourCutsResultState extends State<FourCutsResult> {
         child: Container(
           margin: const EdgeInsets.all(20.0),
           decoration: BoxDecoration(
-            color: Colors.red,
+            color: Colors.blue,
           ),
           child: Column(
             children: [

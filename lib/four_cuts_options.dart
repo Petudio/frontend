@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class FourCutsOptions extends StatefulWidget {
   const FourCutsOptions({Key? key}) : super(key: key);
 
-  final String? initialBackground = '꽃밭';
+  final String? initialBackground = '랜덤';
 
   @override
   _MyScreenStateState createState() => _MyScreenStateState(initialBackground);
@@ -74,6 +74,16 @@ class _MyScreenStateState extends State<FourCutsOptions> {
       children: [
         Text('배경 선택'),
         RadioListTile(
+          title: Text('엄청 귀여운 랜덤 배경'),
+          value: '랜덤',
+          groupValue: selectedBackground,
+          onChanged: (value) {
+            setState(() {
+              selectedBackground = value;
+            });
+          },
+        ),
+        RadioListTile(
           title: Text('꽃밭'),
           value: '꽃밭',
           groupValue: selectedBackground,
@@ -94,7 +104,7 @@ class _MyScreenStateState extends State<FourCutsOptions> {
           },
         ),
         RadioListTile(
-          title: Text('수영'),
+          title: Text('어푸어푸 수영'),
           value: '수영',
           groupValue: selectedBackground,
           onChanged: (value) {
@@ -104,7 +114,7 @@ class _MyScreenStateState extends State<FourCutsOptions> {
           },
         ),
         RadioListTile(
-          title: Text('피라미드'),
+          title: Text('웅장한 피라미드'),
           value: '피라미드',
           groupValue: selectedBackground,
           onChanged: (value) {
