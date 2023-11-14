@@ -34,23 +34,23 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
 
   String selectedPet = 'dog'; // Default selection
 
-  // Future<void> _showLoadingDialog(BuildContext context) async {
-  //   return showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         content: Row(
-  //           children: [
-  //             CircularProgressIndicator(),
-  //             SizedBox(width: 50, height: 100),
-  //             Text("기다려주세요\n만드는 중입니다\n(최대 4분)"),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+  Future<void> _showLoadingDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 50, height: 100),
+              Text("기다려주세요\n만드는 중입니다\n(최대 4분)"),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Future<bool> generateImage(var tempBundleId) async {
     const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate';
@@ -292,7 +292,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
       ),
       bottomNavigationBar: ElevatedButton(
         onPressed: () async {
-          // await _showLoadingDialog(context);
+          await _showLoadingDialog(context);
 
           print("Upload button pressed...");
           for (var entry in selectedItemsMap.entries) {
@@ -302,16 +302,24 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
             print('${entry.key} 배경: ${entry.value}');
           }
           var tempBundleId = '1'; //입력 값으로 바꿔야함
-          bool status = await generateImage(tempBundleId);
-          print("Send complete");
-          Navigator.of(context, rootNavigator: true).pop();
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FourCutsResult2(imageMap: widget.imageMap),
-            ),
-          );
+          bool status;
+          try {
+            status = await generateImage(tempBundleId);
+          } finally {
+            Navigator.pop(context);
+          }
+          if (!status) {
+            print("아직 학습중입니다.");
+          } else {
+            print("Send complete");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    FourCutsResult2(imageMap: widget.imageMap),
+              ),
+            );
+          }
         },
         child: Text('생성하기'),
       ),
