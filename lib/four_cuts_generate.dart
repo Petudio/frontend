@@ -1,11 +1,7 @@
-import 'dart:collection';
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:petudio/four_cuts_result2.dart';
-import 'package:petudio/four_cuts_settings.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:petudio/four_cuts_result.dart';
 
 void main() {
   runApp(FourCutsGenerate());
@@ -21,7 +17,13 @@ class FourCutsGenerate extends StatefulWidget {
 class _FourCutsGenerateState extends State<FourCutsGenerate> {
   final Map<int, String> imageMap = {};
 
-  var bundleId;
+  late TextEditingController _controller; // Controller for the input field
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,10 @@ class _FourCutsGenerateState extends State<FourCutsGenerate> {
           child: Column(
             children: [
               const SizedBox(height: 20),
+              _generateInputField(),
+              const SizedBox(
+                  height:
+                      10), // Add some space between the input field and button
               _generateButtons(),
             ],
           ),
@@ -40,9 +46,22 @@ class _FourCutsGenerateState extends State<FourCutsGenerate> {
     );
   }
 
+  Widget _generateInputField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: TextField(
+        controller: _controller,
+        decoration: InputDecoration(
+          labelText: 'Bundle ID', // Change the label as needed
+        ),
+      ),
+    );
+  }
+
   Future<void> generateImage() async {
     const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate';
-    bundleId = '1'; //TODO:input 받는걸로 변경해야함
+    var bundleId = _controller.text;
+
     Map<String, String> params = {'bundleId': bundleId};
 
     // URL에 파라미터 추가
@@ -74,14 +93,14 @@ class _FourCutsGenerateState extends State<FourCutsGenerate> {
         children: [
           SizedBox(
             child: ElevatedButton(
-              onPressed: () async => {
-                await generateImage(),
+              onPressed: () async {
+                await generateImage();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FourCutsResult2(imageMap: imageMap),
+                    builder: (context) => FourCutsResult(),
                   ),
-                )
+                );
               },
               child: const Text('이미지 생성하기'),
             ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:petudio/four_cuts.dart';
-import 'package:petudio/making_juniors.dart';
-import 'package:petudio/pet_to_human.dart';
+import 'package:petudio/four_cuts_generate.dart';
 
 void main() {
   runApp(const MainApp());
@@ -14,9 +13,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "petudio",
-      theme: ThemeData(
-        primarySwatch : Colors.yellow
-      ),
+      theme: ThemeData(primarySwatch: Colors.yellow),
       home: const MyHomePage(),
     );
   }
@@ -34,22 +31,34 @@ class MyHomePage extends StatelessWidget {
         elevation: 0.0,
       ),
       body: Padding(
-        padding : const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
         child: Column(
           children: <Widget>[
-           
-             InkWell(
-              onTap:(){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context)=>const FourCuts())
-                );
+            InkWell(
+              child: Image.asset("assets/fourcuts_word.jpg"),
+            ),
+            SizedBox(
+                height: 20), // Add some space between the image and buttons
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const FourCuts()));
               },
-              child : 
-            Image.asset("assets/fourcuts_word.jpg"),
+              child: Text('만들러 가기'),
+            ),
+            SizedBox(height: 10), // Add some space between the buttons
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FourCutsGenerate()));
+              },
+              child: Text('만든 이미지 받기'),
             ),
           ],
-        )),
+        ),
+      ),
     );
   }
 }

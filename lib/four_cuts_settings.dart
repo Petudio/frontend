@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:petudio/four_cuts_generate.dart';
 import 'package:petudio/four_cuts_options.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:petudio/main.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class FourCutsSettings extends StatefulWidget {
   final List<XFile?> pickedImages;
 
-  // Add the pickedImages parameter to the constructor
   const FourCutsSettings({Key? key, required this.pickedImages})
       : super(key: key);
 
@@ -30,32 +30,10 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     '구역 4': null,
   };
 
-  // void uploadimages() async {
-  //   final url = Uri.parse('http://54.180.57.146:8080/api/fourcuts/upload');
-  //   var request = http.MultipartRequest('POST', url);
-  //   var _pickedImages = widget.pickedImages;
-  //   for (var image in _pickedImages) {
-  //     request.files.add(
-  //       await http.MultipartFile.fromPath(
-  //         'beforePictures',
-  //         image!.path,
-  //       ),
-  //     );
-  //   }
-
-  //   print(request);
-
-  //   var response = await request.send();
-  //   var responseData = await response.stream.bytesToString();
-  //   print(responseData.split(":")[1]);
-
-  //   //upload button
-  // }
+  String selectedPet = '강아지'; // Default selection
 
   Future<void> sendDataToServer() async {
-    final url = Uri.parse(
-        'http://10.0.2.2:8080/api/four-cuts/upload'); // 서버의 엔드포인트 주소로 변경해야 합니다.
-
+    final url = Uri.parse('http://10.0.2.2:8080/api/four-cuts/upload');
     var request = http.MultipartRequest('POST', url);
     var _pickedImages = widget.pickedImages;
     for (var image in _pickedImages) {
@@ -68,6 +46,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     }
     request.fields['selectedItems'] = jsonEncode(selectedItemsMap);
     request.fields['selectedBackground'] = jsonEncode(selectedBackgroundMap);
+    request.fields['selectedPet'] = selectedPet; // Add selectedPet field
 
     print("fields: " + request.fields.toString());
 
@@ -76,197 +55,252 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     print(responseData.split(":")[1]);
   }
 
+  Future<void> _showLoadingDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 50, height: 100),
+              Text("기다려주세요\n만드는 중입니다\n(최대 4분)"),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Petudio'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Container(
-          margin: const EdgeInsets.all(20.0),
-          decoration: BoxDecoration(
-            color: Colors.red,
+      body: Column(
+        children: [
+          // Radio buttons for selecting pet type
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Radio(
+                  value: '강아지',
+                  groupValue: selectedPet,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedPet = value.toString();
+                    });
+                  },
+                ),
+                Text('강아지'),
+                Radio(
+                  value: '고양이',
+                  groupValue: selectedPet,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedPet = value.toString();
+                    });
+                  },
+                ),
+                Text('고양이'),
+              ],
+            ),
           ),
-          child: Column(
-            children: [
-              Expanded(
-                child: Row(
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                margin: const EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Column(
                   children: [
                     Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          // 구역 1을 선택한 경우, FourCutsOptions 화면으로 이동
-                          var result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FourCutsOptions(),
-                            ),
-                          );
-                          if (result != null) {
-                            setState(() {
-                              selectedItemsMap['구역 1'] = result['items'];
-                              selectedBackgroundMap['구역 1'] =
-                                  result['background'];
-                            });
-                          }
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.all(10.0),
-                          color: Colors.white,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('구역 1\n${selectedItemsMap['구역 1']}'),
-                                if (selectedBackgroundMap['구역 1'] != null)
-                                  Text('배경: ${selectedBackgroundMap['구역 1']}'),
-                              ],
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {
+                                var result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FourCutsOptions(),
+                                  ),
+                                );
+                                if (result != null) {
+                                  setState(() {
+                                    selectedItemsMap['구역 1'] = result['items'];
+                                    selectedBackgroundMap['구역 1'] =
+                                        result['background'];
+                                  });
+                                }
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.all(10.0),
+                                color: Colors.white,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('구역 1\n${selectedItemsMap['구역 1']}'),
+                                      if (selectedBackgroundMap['구역 1'] != null)
+                                        Text(
+                                            '배경: ${selectedBackgroundMap['구역 1']}'),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {
+                                var result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FourCutsOptions(),
+                                  ),
+                                );
+                                if (result != null) {
+                                  setState(() {
+                                    selectedItemsMap['구역 2'] = result['items'];
+                                    selectedBackgroundMap['구역 2'] =
+                                        result['background'];
+                                  });
+                                }
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.all(10.0),
+                                color: Colors.white,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('구역 2\n${selectedItemsMap['구역 2']}'),
+                                      if (selectedBackgroundMap['구역 2'] != null)
+                                        Text(
+                                            '배경: ${selectedBackgroundMap['구역 2']}'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          // 구역 2를 선택한 경우, FourCutsOptions 화면으로 이동
-                          var result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FourCutsOptions(),
-                            ),
-                          );
-                          if (result != null) {
-                            setState(() {
-                              selectedItemsMap['구역 2'] = result['items'];
-                              selectedBackgroundMap['구역 2'] =
-                                  result['background'];
-                            });
-                          }
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.all(10.0),
-                          color: Colors.white,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('구역 2\n${selectedItemsMap['구역 2']}'),
-                                if (selectedBackgroundMap['구역 2'] != null)
-                                  Text('배경: ${selectedBackgroundMap['구역 2']}'),
-                              ],
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {
+                                var result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FourCutsOptions(),
+                                  ),
+                                );
+                                if (result != null) {
+                                  setState(() {
+                                    selectedItemsMap['구역 3'] = result['items'];
+                                    selectedBackgroundMap['구역 3'] =
+                                        result['background'];
+                                  });
+                                }
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.all(10.0),
+                                color: Colors.white,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('구역 3\n${selectedItemsMap['구역 3']}'),
+                                      if (selectedBackgroundMap['구역 3'] != null)
+                                        Text(
+                                            '배경: ${selectedBackgroundMap['구역 3']}'),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {
+                                var result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MainApp(),
+                                  ),
+                                );
+                                if (result != null) {
+                                  setState(() {
+                                    selectedItemsMap['구역 4'] = result['items'];
+                                    selectedBackgroundMap['구역 4'] =
+                                        result['background'];
+                                  });
+                                }
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.all(10.0),
+                                color: Colors.white,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('구역 4\n${selectedItemsMap['구역 4']}'),
+                                      if (selectedBackgroundMap['구역 4'] != null)
+                                        Text(
+                                            '배경: ${selectedBackgroundMap['구역 4']}'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    Image.asset('assets/Logo_of_Petudio_removebg.png'),
                   ],
                 ),
               ),
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          // 구역 3을 선택한 경우, FourCutsOptions 화면으로 이동
-                          var result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FourCutsOptions(),
-                            ),
-                          );
-                          if (result != null) {
-                            setState(() {
-                              selectedItemsMap['구역 3'] = result['items'];
-                              selectedBackgroundMap['구역 3'] =
-                                  result['background'];
-                            });
-                          }
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.all(10.0),
-                          color: Colors.white,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('구역 3\n${selectedItemsMap['구역 3']}'),
-                                if (selectedBackgroundMap['구역 3'] != null)
-                                  Text('배경: ${selectedBackgroundMap['구역 3']}'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          // 구역 4를 선택한 경우, FourCutsOptions 화면으로 이동
-                          var result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FourCutsOptions(),
-                            ),
-                          );
-                          if (result != null) {
-                            setState(() {
-                              selectedItemsMap['구역 4'] = result['items'];
-                              selectedBackgroundMap['구역 4'] =
-                                  result['background'];
-                            });
-                          }
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.all(10.0),
-                          color: Colors.white,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('구역 4\n${selectedItemsMap['구역 4']}'),
-                                if (selectedBackgroundMap['구역 4'] != null)
-                                  Text('배경: ${selectedBackgroundMap['구역 4']}'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Image.asset('assets/Logo_of_Petudio_removebg.png'),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
       bottomNavigationBar: ElevatedButton(
-        onPressed: () {
-          print("만들기 버튼이 눌렸습니다.....");
-          // "만들기" 버튼을 클릭할 때의 로직
-          // 각 구역의 선택된 항목들에 대한 처리를 추가
+        onPressed: () async {
+          await _showLoadingDialog(context);
+
+          print("Upload button pressed...");
           for (var entry in selectedItemsMap.entries) {
             print('${entry.key}: ${entry.value}');
           }
-          // 각 구역의 선택된 배경에 대한 처리를 추가
           for (var entry in selectedBackgroundMap.entries) {
             print('${entry.key} 배경: ${entry.value}');
           }
 
-          sendDataToServer();
-          print("send complete");
+          await sendDataToServer();
+          print("Send complete");
+
+          Navigator.of(context, rootNavigator: true).pop();
+
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FourCutsGenerate(),
+              builder: (context) => MainApp(),
             ),
           );
         },
-        child: Text('만들기'),
+        child: Text('Upload'),
       ),
     );
   }
