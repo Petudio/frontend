@@ -12,12 +12,13 @@ class FourCutsResult extends StatefulWidget {
 
 class _FourCutsResultState extends State<FourCutsResult> {
   // Define your image URLs in the map
-  final Map<int, String> imageMap = {
-    4: 'https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/ca6e6119-fa37-4518-b854-f91e1afcc48d.PNG',
-    3: 'https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/4e7f5f09-37d8-4251-95dd-973e0ff250c3.PNG',
-    2: 'https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/507262e4-4de3-4cc8-8efc-568ff291e5fa.PNG',
-    1: 'https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/9c971ed9-d07d-415f-b7f6-e2f299bbfa38.PNG',
-  };
+  // 테스트용
+  // final Map<int, String> imageMap1 = {
+  //   4: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/ca6e6119-fa37-4518-b854-f91e1afcc48d.PNG",
+  //   3: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/1729cd65-ed0b-4428-af89-997cd05c4139.PNG",
+  //   2: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/1729cd65-ed0b-4428-af89-997cd05c4139.PNG",
+  //   1: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/1729cd65-ed0b-4428-af89-997cd05c4139.PNG",
+  // };
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +39,16 @@ class _FourCutsResultState extends State<FourCutsResult> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: _buildImage(imageMap[4]),
+                      child: Image.network(
+                        widget.imageMap[4]!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     Expanded(
-                      child: _buildImage(imageMap[3]),
+                      child: Image.network(
+                        widget.imageMap[3]!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ],
                 ),
@@ -50,16 +57,21 @@ class _FourCutsResultState extends State<FourCutsResult> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: _buildImage(imageMap[2]),
+                      child: Image.network(
+                        widget.imageMap[2]!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     Expanded(
-                      child: _buildImage(imageMap[1]),
+                      child: Image.network(
+                        widget.imageMap[1]!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ],
                 ),
               ),
-              _buildImage(
-                  'https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/Logo_of_Petudio_removebg.png'),
+              Image.asset('assets/Logo_of_Petudio_removebg.png'),
             ],
           ),
         ),
@@ -72,19 +84,5 @@ class _FourCutsResultState extends State<FourCutsResult> {
         child: Text('다운로드'),
       ),
     );
-  }
-
-  Widget _buildImage(String? imageUrl) {
-    return imageUrl != null
-        ? Image.network(
-            imageUrl,
-            fit: BoxFit.cover, // Adjust the fit property as needed
-            errorBuilder: (context, error, stackTrace) {
-              print('Error loading image: $error');
-              return Icon(
-                  Icons.error); // You can customize the error placeholder
-            },
-          )
-        : Container(); // You can also use a placeholder image here
   }
 }

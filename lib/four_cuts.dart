@@ -33,7 +33,7 @@ class _FourCutsState extends State<FourCuts> {
   }
 
   Future<String> sendDataToServer() async {
-    final url = Uri.parse('http://10.0.2.2:8080/api/four-cuts/upload');
+    final url = Uri.parse('http://54.180.57.146:8080/api/four-cuts/upload');
     var request = http.MultipartRequest('POST', url);
     for (var image in _pickedImages) {
       request.files.add(

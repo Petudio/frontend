@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:petudio/four_cuts_options.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:petudio/four_cuts_result2.dart';
+import 'package:petudio/four_cuts_result.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -52,7 +52,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
   }
 
   Future<bool> generateImage(var tempBundleId) async {
-    const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate';
+    const String baseUrl = 'http://54.180.57.146:8080/api/four-cuts/generate';
 
     Map<String, String> params = {'bundleId': tempBundleId};
 
@@ -290,40 +290,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
         ],
       ),
       bottomNavigationBar: ElevatedButton(
-<<<<<<< HEAD
-        // onPressed: () async {
-        //   // await _showLoadingDialog(context);
-
-        //   print("Upload button pressed...");
-        //   for (var entry in selectedItemsMap.entries) {
-        //     print('${entry.key}: ${entry.value}');
-        //   }
-        //   for (var entry in selectedBackgroundMap.entries) {
-        //     print('${entry.key} 배경: ${entry.value}');
-        //   }
-        //   var tempBundleId = '1'; //입력 값으로 바꿔야함
-        //   bool status = await generateImage(tempBundleId);
-        //   print("Send complete");
-        //   Navigator.of(context, rootNavigator: true).pop();
-
-        //   Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => FourCutsResult2(imageMap: widget.imageMap),
-        //     ),
-        //   );
-        // },
-        onPressed: () {
-          print("생성하기 버튼");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FourCutsResult2(imageMap: widget.imageMap),
-            ),
-          );
-=======
         onPressed: () async {
-          await _showLoadingDialog(context);
+          _showLoadingDialog(context);
 
           print("Upload button pressed...");
           for (var entry in selectedItemsMap.entries) {
@@ -333,26 +301,27 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
             print('${entry.key} 배경: ${entry.value}');
           }
           var tempBundleId = '1'; //입력 값으로 바꿔야함
-          bool status;
-          try {
-            status = await generateImage(tempBundleId);
-          } finally {
-            Navigator.pop(context);
-          }
-          if (!status) {
-            print("아직 학습중입니다.");
-          } else {
-            print("Send complete");
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    FourCutsResult2(imageMap: widget.imageMap),
-              ),
-            );
-          }
->>>>>>> 48fa24f5810fb198afdbb57bd313d0518406582a
+          bool status = await generateImage(tempBundleId);
+          print("Send complete");
+          Navigator.of(context, rootNavigator: true).pop();
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FourCutsResult(imageMap: widget.imageMap),
+            ),
+          );
         },
+        //화면 테스트용
+        // onPressed: () {
+        //   print("생성하기 버튼");
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => FourCutsResult(imageMap: widget.imageMap),
+        //     ),
+        //   );
+        // },
         child: Text('생성하기'),
       ),
     );
