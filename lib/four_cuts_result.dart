@@ -71,7 +71,7 @@ class _FourCutsResultState extends State<FourCutsResult> {
                     ],
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 Expanded(
                   child: Row(
                     children: [
