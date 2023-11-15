@@ -43,7 +43,7 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
             children: [
               CircularProgressIndicator(),
               SizedBox(width: 50, height: 100),
-              Text("기다려주세요\n만드는 중입니다\n(최대 4분)"),
+              Text("기다려주세요\n생성중 입니다\n(4분정도 소요됩니다.)"),
             ],
           ),
         );
@@ -52,7 +52,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
   }
 
   Future<bool> generateImage(var tempBundleId) async {
-    const String baseUrl = 'http://54.180.57.146:8080/api/four-cuts/generate';
+    const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate'; //로컬
+    // const String baseUrl = 'http://54.180.57.146:8080/api/four-cuts/generate'; //ec2
 
     Map<String, String> params = {'bundleId': tempBundleId};
 
@@ -65,6 +66,11 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
 
     var response = await request.send();
     var responseData = await response.stream.bytesToString();
+    print("123123123:" + responseData);
+    return setImageMap(responseData);
+  }
+
+  bool setImageMap(String responseData) {
     var jsonData = jsonDecode(responseData);
     var bundle = jsonData["data"];
 
@@ -84,6 +90,18 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     }
     print("imageMap" + widget.imageMap.toString());
     return true;
+  }
+
+  Future<void> getGeneratedImage(String tempBundleId) async {
+    const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate'; //로컬
+    // const String baseUrl = 'http://54.180.57.146:8080/api/four-cuts/generate';
+    Map<String, String> params = {'bundleId': tempBundleId};
+    // URL에 파라미터 추가
+    Uri uri = Uri.parse(baseUrl).replace(queryParameters: params);
+
+    var response = await http.get(uri);
+    print(response.body);
+    await setImageMap(response.body);
   }
 
   @override
@@ -316,10 +334,23 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                 }
                 var tempBundleId = bundleIdController.text; // 입력 값으로 바꿔야함
                 print(tempBundleId);
-                bool status = await generateImage(tempBundleId);
+                try {
+                  bool status = await generateImage(tempBundleId)
+                      .timeout(Duration(minutes: 4));
+                } catch (e) {
+                  await getGeneratedImage(tempBundleId);
+                  print(widget.imageMap);
+                  Navigator.of(context, rootNavigator: true).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          FourCutsResult(imageMap: widget.imageMap),
+                    ),
+                  );
+                }
                 print("Send complete");
                 Navigator.of(context, rootNavigator: true).pop();
-
                 Navigator.push(
                   context,
                   MaterialPageRoute(
