@@ -35,12 +35,12 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   PageController _pageController =
       PageController(viewportFraction: 0.85); // Added viewportFraction
-  final Map<int, String> imageMap = {
-    4: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/ca6e6119-fa37-4518-b854-f91e1afcc48d.PNG",
-    3: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/1729cd65-ed0b-4428-af89-997cd05c4139.PNG",
-    2: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/1729cd65-ed0b-4428-af89-997cd05c4139.PNG",
-    1: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/1729cd65-ed0b-4428-af89-997cd05c4139.PNG",
-  };
+  // final Map<int, String> imageMap = {
+  //   4: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/ca6e6119-fa37-4518-b854-f91e1afcc48d.PNG",
+  //   3: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/1729cd65-ed0b-4428-af89-997cd05c4139.PNG",
+  //   2: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/1729cd65-ed0b-4428-af89-997cd05c4139.PNG",
+  //   1: "https://petudio-bucket.s3.ap-northeast-2.amazonaws.com/1729cd65-ed0b-4428-af89-997cd05c4139.PNG",
+  // };
 
   @override
   void initState() {
@@ -126,18 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               child: Text('만든 이미지 받기'),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FourCutsResult(imageMap: imageMap),
-                  ),
-                );
-              },
-              child: Text('test'),
             ),
           ],
         ),
