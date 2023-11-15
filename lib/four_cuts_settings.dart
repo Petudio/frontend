@@ -31,7 +31,6 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
     '구역 4': null,
   };
 
-  String selectedPet = ''; // Default selection
   TextEditingController bundleIdController = TextEditingController();
 
   Future<void> _showLoadingDialog(BuildContext context) async {
@@ -103,20 +102,20 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
               children: [
                 Radio(
                   value: 'dog',
-                  groupValue: selectedPet,
+                  groupValue: animalType,
                   onChanged: (value) {
                     setState(() {
-                      selectedPet = value.toString();
+                      animalType = value.toString();
                     });
                   },
                 ),
                 Text('강아지'),
                 Radio(
                   value: 'cat',
-                  groupValue: selectedPet,
+                  groupValue: animalType,
                   onChanged: (value) {
                     setState(() {
-                      selectedPet = value.toString();
+                      animalType = value.toString();
                     });
                   },
                 ),
@@ -302,12 +301,12 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
         ],
       ),
       bottomNavigationBar: ElevatedButton(
-        onPressed: (selectedPet != null &&
+        onPressed: (animalType != '' &&
                 selectedBackgroundMap.values
                     .every((background) => background != null))
             ? () async {
                 _showLoadingDialog(context);
-
+                print(animalType);
                 print("Upload button pressed...");
                 for (var entry in selectedItemsMap.entries) {
                   print('${entry.key}: ${entry.value}');
@@ -315,7 +314,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
                 for (var entry in selectedBackgroundMap.entries) {
                   print('${entry.key} 배경: ${entry.value}');
                 }
-                var tempBundleId = '1'; // 입력 값으로 바꿔야함
+                var tempBundleId = bundleIdController.text; // 입력 값으로 바꿔야함
+                print(tempBundleId);
                 bool status = await generateImage(tempBundleId);
                 print("Send complete");
                 Navigator.of(context, rootNavigator: true).pop();
