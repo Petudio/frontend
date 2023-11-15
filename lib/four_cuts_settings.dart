@@ -52,8 +52,9 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
   }
 
   Future<bool> generateImage(var tempBundleId) async {
-    const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate'; //로컬
-    // const String baseUrl = 'http://54.180.57.146:8080/api/four-cuts/generate'; //ec2
+    // const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate'; //로컬
+    const String baseUrl =
+        'http://54.180.57.146:8080/api/four-cuts/generate'; //ec2
 
     Map<String, String> params = {'bundleId': tempBundleId};
 
@@ -93,8 +94,8 @@ class _FourCutsSettingsState extends State<FourCutsSettings> {
   }
 
   Future<void> getGeneratedImage(String tempBundleId) async {
-    const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate'; //로컬
-    // const String baseUrl = 'http://54.180.57.146:8080/api/four-cuts/generate';
+    // const String baseUrl = 'http://10.0.2.2:8080/api/four-cuts/generate'; //로컬
+    const String baseUrl = 'http://54.180.57.146:8080/api/four-cuts/generate';
     Map<String, String> params = {'bundleId': tempBundleId};
     // URL에 파라미터 추가
     Uri uri = Uri.parse(baseUrl).replace(queryParameters: params);

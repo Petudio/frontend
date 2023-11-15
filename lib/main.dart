@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:petudio/four_cuts.dart';
+import 'package:petudio/four_cuts_get.dart';
 import 'package:petudio/four_cuts_settings.dart';
 
 void main() {
@@ -113,10 +114,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     MaterialPageRoute(builder: (context) => const FourCuts()),
                   );
                 },
-                child: Text('만들러 가기'),
+                child: Text('내 반려동물 등록하기'),
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 15),
             Container(
               width: double.infinity,
               height: 50,
@@ -135,7 +136,27 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   );
                 },
-                child: Text('만든 이미지 받기'),
+                child: Text('이미지 생성하기'),
+              ),
+            ),
+            SizedBox(height: 15),
+            Container(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100.0),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FourCutsGet()),
+                  );
+                },
+                child: Text('생성한 이미지 조회'),
               ),
             ),
           ],
