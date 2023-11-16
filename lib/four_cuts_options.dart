@@ -84,7 +84,7 @@ class _MyScreenStateState extends State<FourCutsOptions> {
           },
         ),
         RadioListTile(
-          title: Text('꽃밭'),
+          title: Text('샤랄라 꽃밭'),
           value: '꽃밭',
           groupValue: selectedBackground,
           onChanged: (value) {
@@ -94,8 +94,8 @@ class _MyScreenStateState extends State<FourCutsOptions> {
           },
         ),
         RadioListTile(
-          title: Text('우주'),
-          value: '우주',
+          title: Text('봄봄봄 벚꽃'),
+          value: '벚꽃',
           groupValue: selectedBackground,
           onChanged: (value) {
             setState(() {
@@ -124,8 +124,8 @@ class _MyScreenStateState extends State<FourCutsOptions> {
           },
         ),
         RadioListTile(
-          title: Text('동화'),
-          value: '동화',
+          title: Text('활기찬 경기장'),
+          value: '경기장',
           groupValue: selectedBackground,
           onChanged: (value) {
             setState(() {
@@ -134,8 +134,8 @@ class _MyScreenStateState extends State<FourCutsOptions> {
           },
         ),
         RadioListTile(
-          title: Text('만화'),
-          value: '만화',
+          title: Text('시원한 해변'),
+          value: '해변',
           groupValue: selectedBackground,
           onChanged: (value) {
             setState(() {

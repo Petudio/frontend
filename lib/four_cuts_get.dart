@@ -57,7 +57,7 @@ class FourCutsGetState extends State<FourCutsGet> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter 텍스트 입력 예제'),
+        title: Text('Petudio'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
